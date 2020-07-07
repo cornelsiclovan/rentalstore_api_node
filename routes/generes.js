@@ -39,10 +39,10 @@ router.post('/', auth, async (req, res) => {
     res.send(genere);
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', validateObjectId, async (req, res) => {
     const { error } = validate(req.body);
     if(error)
-        return res.status(404).send(error.details[0].message);
+        return res.status(400).send(error.details[0].message);
 
     const genere = await Genere.findByIdAndUpdate(req.params.id, { name:  req.body.name}, {
         new: true
@@ -54,7 +54,7 @@ router.put('/:id', async (req, res) => {
     res.send(genere);
 });
 
-router.delete('/:id', [auth, admin], async (req, res) => {
+router.delete('/:id', [auth, admin], validateObjectId, async (req, res) => {
     const genere = await Genere.findByIdAndRemove(req.params.id);
    
     if(!genere)
